@@ -3,9 +3,8 @@
 #include "assert.h"
 #include "limits.h"
 
-
-
-
+#define MAX(x, y) (((x) > (y)) ? (x) : (y))
+#define MIN(x, y) (((x) < (y)) ? (x) : (y))
 
 void rastBBox_vec_fix( vector< u_Poly< long , ushort > >& polys,
 		      zbuff& z )
@@ -162,12 +161,33 @@ void rastBBox_bbox_fix( u_Poly< long , ushort >& poly ,
   
   ///// PLACE YOUR CODE HERE
 
+  /* Calculate bounding box */
+  ur_x = MAX(MAX(poly.v[0].x[0], poly.v[1].x[0]),poly.v[2].x[0]);
+  ur_y = MAX(MAX(poly.v[0].x[1], poly.v[1].x[1]),poly.v[2].x[1]);
+  ll_x = MIN(MIN(poly.v[0].x[0], poly.v[1].x[0]),poly.v[2].x[0]);
+  ll_y = MIN(MIN(poly.v[0].x[1], poly.v[1].x[1]),poly.v[2].x[1]);
 
+  if (poly.vertices == 4){
+    ur_x = MAX(ur_x, poly.v[3].x[0]);
+    ur_y = MAX(ur_y, poly.v[3].x[1]);
+    ll_x = MIN(ll_x, poly.v[3].x[0]);
+    ll_y = MIN(ll_y, poly.v[3].x[1]);
+  }
+
+  /* Clamp bounding box */
+  ur_x = (ur_x >> (r_shift - ss_w_lg2)) << (r_shift - ss_w_lg2);
+  ur_y = (ur_y >> (r_shift - ss_w_lg2)) << (r_shift - ss_w_lg2);
+  ll_x = (ll_x >> (r_shift - ss_w_lg2)) << (r_shift - ss_w_lg2);
+  ll_y = (ll_y >> (r_shift - ss_w_lg2)) << (r_shift - ss_w_lg2);
+
+  /* Clip bounding box */
+  ur_x = ur_x > screen_w ? screen_w : ur_x;
+  ur_y = ur_y > screen_h ? screen_h : ur_y;
+  ll_x = ll_x < 0 ? 0 : ll_x;
+  ll_y = ll_y < 0 ? 0 : ll_y;
   
-  
-  
-  
-  
+  /* Check for valid bounding box */
+  valid = (ur_x < 0 || ur_y < 0 || ll_x > screen_w || ll_y > screen_h) ? false : true;
 
   /////
   ///// Bounding Box Function Goes Here
