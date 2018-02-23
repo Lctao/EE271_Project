@@ -3,6 +3,9 @@
 #include <limits.h>
 #include <assert.h>
 
+#define MAX(x, y) (((x) > (y)) ? (x) : (y))
+#define MIN(x, y) (((x) < (y)) ? (x) : (y))
+
 //Given a uPoly and Bbox check that Bbox is good bound 
 // on uPoly
 int rastBBox_bbox_check( int   v0_x,     //uPoly
@@ -53,8 +56,33 @@ int rastBBox_bbox_check( int   v0_x,     //uPoly
   //
   // note that bool,true, and false are not in c
 
+  int is_quad = (poly.q == 4);
 
-			  
+  /* Calculate bounding box */
+  ur_x = MAX(MAX(poly.v[0].x[0], poly.v[1].x[0]),poly.v[2].x[0]);
+  ur_y = MAX(MAX(poly.v[0].x[1], poly.v[1].x[1]),poly.v[2].x[1]);
+  ll_x = MIN(MIN(poly.v[0].x[0], poly.v[1].x[0]),poly.v[2].x[0]);
+  ll_y = MIN(MIN(poly.v[0].x[1], poly.v[1].x[1]),poly.v[2].x[1]);
+
+  ur_x = is_quad ? MAX(ur_x, poly.v[3].x[0]) : ur_x;
+  ur_y = is_quad ? MAX(ur_y, poly.v[3].x[1]) : ur_y;
+  ll_x = is_quad ? MIN(ll_x, poly.v[3].x[0]) : ll_x;
+  ll_y = is_quad ? MIN(ll_y, poly.v[3].x[1]) : ll_y;
+
+  /* Clamp bounding box */
+  ur_x = (ur_x >> (r_shift - ss_w_lg2)) << (r_shift - ss_w_lg2);
+  ur_y = (ur_y >> (r_shift - ss_w_lg2)) << (r_shift - ss_w_lg2);
+  ll_x = (ll_x >> (r_shift - ss_w_lg2)) << (r_shift - ss_w_lg2);
+  ll_y = (ll_y >> (r_shift - ss_w_lg2)) << (r_shift - ss_w_lg2);
+
+  /* Clip bounding box */
+  ur_x = ur_x > screen_w ? screen_w : ur_x;
+  ur_y = ur_y > screen_h ? screen_h : ur_y;
+  ll_x = ll_x < 0 ? 0 : ll_x;
+  ll_y = ll_y < 0 ? 0 : ll_y;
+  
+  /* Check for valid bounding box */
+  valid = (ur_x >= 0 && ur_y >= 0 && ll_x <= screen_w && ll_y <= screen_h);
 
   //
   //Copy Past C++ Bounding Box Function ****END****
@@ -142,7 +170,35 @@ int rastBBox_stest_check( int   v0_x,      //uPoly
   //
   // note that bool,true, and false are not in c
 
+  long v0_x, v0_y, v1_x, v1_y, v2_x, v2_y, v3_x, v3_y;
+  long dist0, dist1, dist2_t, dist2_q, dist3_q;
+  long b0, b1, b2_t, b2_q, b3_q;
   
+  // Shift vertices to place sample at origin
+  v0_x = poly.v[0].x[0] - s_x;
+  v0_y = poly.v[0].x[1] - s_y;
+  v1_x = poly.v[1].x[0] - s_x;
+  v1_y = poly.v[1].x[1] - s_y;
+  v2_x = poly.v[2].x[0] - s_x;
+  v2_y = poly.v[2].x[1] - s_y;
+  v3_x = poly.v[3].x[0] - s_x;
+  v3_y = poly.v[3].x[1] - s_y;
+
+  // Calculate distances
+  dist0 = (v0_x * v1_y) - (v1_x * v0_y);
+  dist1 = (v1_x * v2_y) - (v2_x * v1_y);
+  dist2_t = (v2_x * v0_y) - (v0_x * v2_y);
+  dist2_q = (v2_x * v3_y) - (v3_x - v2_y);
+  dist3_q = (v3_x * v0_y) - (v0_x * v3_y); 
+
+  // Test if origin is on right side of shifted edge
+  b0   = dist0   <= 0.0;
+  b1   = dist1   < 0.0;
+  b2_t = dist2_t <= 0.0;
+  b2_q = dist2_q < 0.0;
+  b3_q = dist3_q <= 0.0;
+
+  result = (poly.q == 3) ? (b0 && b1 && b2_t) : (b0 && b1 && b2_q && b3_q); 
 
   //
   //Copy Past C++ Sample Test Function ****END****
@@ -195,13 +251,33 @@ int rastBBox_check( int   v0_x,      //uPoly
   //
   // note that bool,true, and false are not in c
 
+  int is_quad = (poly.q == 4);
 
+  /* Calculate bounding box */
+  ur_x = MAX(MAX(poly.v[0].x[0], poly.v[1].x[0]),poly.v[2].x[0]);
+  ur_y = MAX(MAX(poly.v[0].x[1], poly.v[1].x[1]),poly.v[2].x[1]);
+  ll_x = MIN(MIN(poly.v[0].x[0], poly.v[1].x[0]),poly.v[2].x[0]);
+  ll_y = MIN(MIN(poly.v[0].x[1], poly.v[1].x[1]),poly.v[2].x[1]);
+
+  ur_x = is_quad ? MAX(ur_x, poly.v[3].x[0]) : ur_x;
+  ur_y = is_quad ? MAX(ur_y, poly.v[3].x[1]) : ur_y;
+  ll_x = is_quad ? MIN(ll_x, poly.v[3].x[0]) : ll_x;
+  ll_y = is_quad ? MIN(ll_y, poly.v[3].x[1]) : ll_y;
+
+  /* Clamp bounding box */
+  ur_x = (ur_x >> (r_shift - ss_w_lg2)) << (r_shift - ss_w_lg2);
+  ur_y = (ur_y >> (r_shift - ss_w_lg2)) << (r_shift - ss_w_lg2);
+  ll_x = (ll_x >> (r_shift - ss_w_lg2)) << (r_shift - ss_w_lg2);
+  ll_y = (ll_y >> (r_shift - ss_w_lg2)) << (r_shift - ss_w_lg2);
+
+  /* Clip bounding box */
+  ur_x = ur_x > screen_w ? screen_w : ur_x;
+  ur_y = ur_y > screen_h ? screen_h : ur_y;
+  ll_x = ll_x < 0 ? 0 : ll_x;
+  ll_y = ll_y < 0 ? 0 : ll_y;
   
-  
-  
-  
-  
-  
+  /* Check for valid bounding box */
+  valid = (ur_x >= 0 && ur_y >= 0 && ll_x <= screen_w && ll_y <= screen_h);
 
   //
   //Copy Past C++ Bounding Box Function ****END****
@@ -225,17 +301,36 @@ int rastBBox_check( int   v0_x,      //uPoly
       //Copy Past C++ Sample Test Function ****BEGIN****
       //
       // note that bool,true, and false are not in c
-      
 
-	  
-	  
-	  
-	  
-	  
-	  
-	  
-	  
-	  
+      long v0_x, v0_y, v1_x, v1_y, v2_x, v2_y, v3_x, v3_y;
+      long dist0, dist1, dist2_t, dist2_q, dist3_q;
+      long b0, b1, b2_t, b2_q, b3_q;
+      
+      // Shift vertices to place sample at origin
+      v0_x = poly.v[0].x[0] - s_x;
+      v0_y = poly.v[0].x[1] - s_y;
+      v1_x = poly.v[1].x[0] - s_x;
+      v1_y = poly.v[1].x[1] - s_y;
+      v2_x = poly.v[2].x[0] - s_x;
+      v2_y = poly.v[2].x[1] - s_y;
+      v3_x = poly.v[3].x[0] - s_x;
+      v3_y = poly.v[3].x[1] - s_y;
+    
+      // Calculate distances
+      dist0 = (v0_x * v1_y) - (v1_x * v0_y);
+      dist1 = (v1_x * v2_y) - (v2_x * v1_y);
+      dist2_t = (v2_x * v0_y) - (v0_x * v2_y);
+      dist2_q = (v2_x * v3_y) - (v3_x - v2_y);
+      dist3_q = (v3_x * v0_y) - (v0_x * v3_y); 
+    
+      // Test if origin is on right side of shifted edge
+      b0   = dist0   <= 0.0;
+      b1   = dist1   < 0.0;
+      b2_t = dist2_t <= 0.0;
+      b2_q = dist2_q < 0.0;
+      b3_q = dist3_q <= 0.0;
+    
+      result = (poly.q == 3) ? (b0 && b1 && b2_t) : (b0 && b1 && b2_q && b3_q); 
   
       //
       //Copy Past C++ Sample Test Function ****END****
