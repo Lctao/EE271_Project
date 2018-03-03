@@ -1,0 +1,42 @@
+/bin/sh: 0: Illegal option -h
+*** Using c compiler gcc instead of cc ...
+*** Using loader gcc instead of cc ...
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+                         Chronologic VCS (TM)
+         Version M-2017.03_Full64 -- Sat Mar  3 03:12:06 2018
+               Copyright (c) 1991-2017 by Synopsys Inc.
+                         ALL RIGHTS RESERVED
+
+This program is proprietary and confidential information of Synopsys Inc.
+and may be used and disclosed only as authorized in a license agreement
+controlling such use and disclosure.
+
+Parsing design file 'genesis_synth/dff_unq1.v'
+Parsing design file 'genesis_synth/dff2_unq1.v'
+Parsing design file 'genesis_synth/dff3_unq1.v'
+Parsing design file 'genesis_synth/dff2_unq2.v'
+Parsing design file 'genesis_synth/dff3_unq2.v'
+Parsing design file 'genesis_synth/dff_unq2.v'
+Parsing design file 'genesis_synth/dff_unq3.v'
+Parsing design file 'genesis_synth/dff2_unq3.v'
+Parsing design file 'genesis_synth/dff3_unq3.v'
+Parsing design file 'genesis_synth/dff2_unq4.v'
+Parsing design file 'genesis_synth/dff3_unq4.v'
+Parsing design file 'genesis_synth/dff_unq4.v'
+Parsing design file 'genesis_synth/bbox_unq1.v'
+Parsing design file 'genesis_synth/dff_unq5.v'
+Parsing design file 'genesis_synth/dff_unq6.v'
+Parsing design file 'genesis_synth/test_iterator_unq1.v'
+
+Error-[SE] Syntax error
+  Following verilog source has syntax error :
+  "genesis_synth/test_iterator_unq1.v", 277: token is '='
+  	   next_validSamp_R14H =
+                                  ^
+
+1 error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
