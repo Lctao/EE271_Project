@@ -315,7 +315,7 @@ module `mname()`
 	   next_poly_R14S      = poly_R14S; 
 	   next_color_R14U     = color_R14U; 
 	   next_box_R14S       = box_R14S; 
-	   next_halt_RnnnnL    = at_end_box_R14H? 1'b0:1'b1;
+	   next_halt_RnnnnL    = at_end_box_R14H? 1'b1:1'b0;
 	end      
       endcase // case ( state_R14H )
 
