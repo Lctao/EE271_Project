@@ -120,7 +120,7 @@ module  `mname()`
    // Signals in Access Order 
 
    //////// DECLARE OTHER INTERMEDIATE SIGNALS YOU NEED
-   logic is_Hit[`$verts` - 1:0]
+   logic is_Hit[`$verts` - 1:0];
 
 
    //; if( $verts == 3 ) {
@@ -132,22 +132,22 @@ module  `mname()`
    // Consider the following steps:
 
    //// (1) Shift X, Y coordinates such that the fragment resides on the (0,0) position.
-
+   always_comb begin
    //; for( my $i = 0 ; $i < $verts ; $i++ ) {
    //;  for( my $j = 0 ; $j < 2 ; $j++ ) {
-   always_comb begin
-      poly_shift_R16S[`$i`][`$j`] = poly_R16S[`$i`][`$j`] - sample_R16S[`$i`][`$j`];
-   end
+   //always_comb begin
+      poly_shift_R16S[`$i`][`$j`] = poly_R16S[`$i`][`$j`] - sample_R16S[`$j`];
+   //end
    //;  }
    //; }
-
+   end
    //// (2) Organize edges (form three edges for triangles)
 
-   always_comb begin
+  /* always_comb begin
      // assign edge_R16S
 	 //EA: I'm not sure what this is or why it needs to be done. Gold doesn't do this.
 	 //EA: Maybe SV can't handle all the multiplication and subtraction in one line below.
-   end
+    end*/
 
    //// (3) Calculate distance x_1 * y_2 - x_2 * y_1
 
@@ -170,9 +170,11 @@ module  `mname()`
 	 is_Hit[2] = dist_lg_R16S[2] <= 0; 
 	 //is_Hit[3] = dist_lg_R16S[2] < 0; 
 	 //is_Hit[4] = dist_lg_R16S[2] <= 0; 
-	 //is_Hit[5] = dist_lg_R16S[2] < 0; 
-	 hit_valid_R18H = &is_Hit;
+	 //is_Hit[5] = dist_lg_R16S[2] < 0;
    end   
+   //assign hit_valid_R16H = &is_Hit; //I think there should be extra logic here because of the varible $verts
+   assign hit_valid_R16H = is_Hit[0] & is_Hit[1] & is_Hit[2] & validSamp_R16H;
+
 
    //////// END YOUR IMPLEMENTATION
 

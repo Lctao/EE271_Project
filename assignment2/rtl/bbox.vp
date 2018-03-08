@@ -186,8 +186,9 @@ module `mname()`
    logic 				outvalid_R10H;               // output is valid
    
    //////// DECLARE OTHER SIGNALS YOU NEED
-   logic [1:0][3:0] comp_sel_R10H;
-   logic [3:0] comp_val_R10S;
+   logic [1:0][2:0] comp_sel_R10H; //[X = 0, Y = 1][Vert #]
+   logic [1:0][2:0] comp_dec_max_R10S; //[X = 0, Y = 1][Max Vertex = 1]
+   logic [1:0][2:0] comp_dec_min_R10S; //[X = 0, Y = 1][Min Vertex = 1]
 
    logic [2:0] subSample_mask_R10U;
 
@@ -220,63 +221,72 @@ module `mname()`
     * */
 
    //; if( $verts == 3 ) {
-   // Assign select signals
+   // Assign helper signals
    always_comb begin
-      comp_sel_R10H[0][0] = poly_R10S[0][0] < poly_R10S[1][0];
-      comp_sel_R10H[0][1] = poly_R10S[0][1] < poly_R10S[1][1];
-      comp_sel_R10H[0][2] = poly_R10S[0][0] > poly_R10S[1][0];
-      comp_sel_R10H[0][3] = poly_R10S[0][1] > poly_R10S[1][1];
+   //Configure X
+      comp_sel_R10H[0][0] = poly_R10S[0][0] > poly_R10S[1][0];
+      comp_sel_R10H[0][1] = poly_R10S[0][0] > poly_R10S[2][0];
+      comp_sel_R10H[0][2] = poly_R10S[1][0] > poly_R10S[2][0];
+   //Configure Y
+      comp_sel_R10H[1][0] = poly_R10S[0][1] > poly_R10S[1][1];
+      comp_sel_R10H[1][1] = poly_R10S[0][1] > poly_R10S[2][1];
+      comp_sel_R10H[1][2] = poly_R10S[1][1] > poly_R10S[2][1];
 
-      comp_sel_R10H[1][0] = comp_val_R10S[0] < poly_R10S[2][0];
-      comp_sel_R10H[1][1] = comp_val_R10S[1] < poly_R10S[2][1];
-      comp_sel_R10H[1][2] = comp_val_R10S[2] > poly_R10S[2][0];
-      comp_sel_R10H[1][3] = comp_val_R10S[3] > poly_R10S[2][1];
    end
 
-   // Assign mux inout
+   // Assign mux select
    always_comb begin
-     // Level 1
-     // UR_X
-      unique case (comp_sel_R10H[0][0])
-         (1'b0): comp_val_R10S[0] = poly_R10S[0][0];
-         (1'b1): comp_val_R10S[0] = poly_R10S[1][0];
-      endcase
-      unique case (comp_sel_R10H[1][0])
-         (1'b0): box_R10S[1][0]   = comp_val_R10S[0];
-         (1'b1): box_R10S[1][0]   = poly_R10S[2][0];
-      endcase
-     
+      // Level 1
+      // UR_X
+      comp_dec_max_R10S[0][0] = comp_sel_R10H[0][0] & comp_sel_R10H[0][1];
+      comp_dec_max_R10S[0][1] = !comp_sel_R10H[0][0] & comp_sel_R10H[0][2];
+      comp_dec_max_R10S[0][2] = !(comp_sel_R10H[0][1] | comp_sel_R10H[0][2]);     
       // UR_Y
-      unique case (comp_sel_R10H[0][1])
-         (1'b0): comp_val_R10S[1] = poly_R10S[0][1];
-         (1'b1): comp_val_R10S[1] = poly_R10S[1][1];
-      endcase
-      unique case (comp_sel_R10H[1][1])
-         (1'b0): box_R10S[1][1]   = comp_val_R10S[1];
-         (1'b1): box_R10S[1][1]   = poly_R10S[2][1];
-      endcase
-
+      comp_dec_max_R10S[1][0] = comp_sel_R10H[1][0] & comp_sel_R10H[1][1];
+      comp_dec_max_R10S[1][1] = !comp_sel_R10H[1][0] & comp_sel_R10H[1][2];
+      comp_dec_max_R10S[1][2] = !(comp_sel_R10H[1][1] | comp_sel_R10H[1][2]);
       // LL_X
-      unique case (comp_sel_R10H[0][2])
-         (1'b0): comp_val_R10S[2] = poly_R10S[0][0];
-         (1'b1): comp_val_R10S[2] = poly_R10S[1][0];
-      endcase
-      unique case (comp_sel_R10H[1][2])
-         (1'b0): box_R10S[0][0]   = comp_val_R10S[2];
-         (1'b1): box_R10S[0][0]   = poly_R10S[2][0];
-      endcase
-     
+      comp_dec_min_R10S[0][0] = !(comp_sel_R10H[0][0] | comp_sel_R10H[0][1]);
+      comp_dec_min_R10S[0][1] = comp_sel_R10H[0][0] & !comp_sel_R10H[0][2];
+      comp_dec_min_R10S[0][2] = comp_sel_R10H[0][1] & comp_sel_R10H[0][2];
       // LL_Y
-      unique case (comp_sel_R10H[0][3])
-         1'b0: comp_val_R10S[3] = poly_R10S[0][1];
-         1'b1: comp_val_R10S[3] = poly_R10S[1][1];
-      endcase
-      unique case (comp_sel_R10H[1][3])
-         1'b0: box_R10S[0][1]   = comp_val_R10S[3];
-         1'b1: box_R10S[0][1]   = poly_R10S[2][1];
-      endcase
-
+      comp_dec_min_R10S[1][0] = !(comp_sel_R10H[1][0] | comp_sel_R10H[1][1]);
+      comp_dec_min_R10S[1][1] = comp_sel_R10H[1][0] & !comp_sel_R10H[1][2];
+      comp_dec_min_R10S[1][2] = comp_sel_R10H[1][1] & comp_sel_R10H[1][2];
    end
+
+   always_comb begin
+   //UR_X
+      case(comp_dec_max_R10S[0][2:0])
+         3'b001: box_R10S[1][0] = poly_R10S[0][0];
+         3'b010: box_R10S[1][0] = poly_R10S[1][0];
+         3'b100: box_R10S[1][0] = poly_R10S[2][0];
+         default: box_R10S[1][0] = poly_R10S[0][0];
+      endcase
+   //UR_Y
+      case(comp_dec_max_R10S[1][2:0])
+         3'b001: box_R10S[1][1] = poly_R10S[0][1];
+         3'b010: box_R10S[1][1] = poly_R10S[1][1];
+         3'b100: box_R10S[1][1] = poly_R10S[2][1];
+         default: box_R10S[1][1] = poly_R10S[0][1];
+      endcase
+   //LL_X
+      case(comp_dec_min_R10S[0][2:0])
+         3'b001: box_R10S[0][0] = poly_R10S[0][0];
+         3'b010: box_R10S[0][0] = poly_R10S[1][0];
+         3'b100: box_R10S[0][0] = poly_R10S[2][0];
+         default: box_R10S[0][0] = poly_R10S[0][0];
+      endcase
+   //LL_Y
+      case(comp_dec_min_R10S[1][2:0])
+         3'b001: box_R10S[0][1] = poly_R10S[0][1];
+         3'b010: box_R10S[0][1] = poly_R10S[1][1];
+         3'b100: box_R10S[0][1] = poly_R10S[2][1];
+         default: box_R10S[0][1] = poly_R10S[0][1];
+      endcase
+   end
+   
+
    //; }  
 
    // ***************** End of Step 1 *********************
@@ -319,7 +329,7 @@ module `mname()`
       rounded_box_R10S[`$i`][`$j`][`$sig_fig`-1:`$radix`] 
      = box_R10S[`$i`][`$j`][`$sig_fig`-1:`$radix`];
 
-      // Use mask to assign middle bits
+     // Use mask to assign middle bits
       rounded_box_R10S[`$i`][`$j`][`$radix`-1:`$radix`-3]
      = box_R10S[`$i`][`$j`][`$radix`-1:`$radix`-3] & subSample_mask_R10U;
 
@@ -357,10 +367,10 @@ module `mname()`
 
       
       // Check for valid bounding box
-      validBox_R10H[0] = (rounded_box_R10S[1][0] >= 0);
-      validBox_R10H[1] = (rounded_box_R10S[1][1] >= 0);
-      validBox_R10H[2] = (rounded_box_R10S[0][0] <= screen_RnnnnS[0]);
-      validBox_R10H[3] = (rounded_box_R10S[0][1] <= screen_RnnnnS[1]);
+      validBox_R10H[0] = (rounded_box_R10S[1][0] > 0);
+      validBox_R10H[1] = (rounded_box_R10S[1][1] > 0);
+      validBox_R10H[2] = (rounded_box_R10S[0][0] < screen_RnnnnS[0]);
+      validBox_R10H[3] = (rounded_box_R10S[0][1] < screen_RnnnnS[1]);
       outvalid_R10H = validPoly_R10H & (&validBox_R10H);
    end
 
