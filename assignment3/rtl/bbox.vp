@@ -227,7 +227,8 @@ module `mname()`
 
    //; if( $verts == 3 ) {
    // Bubble smashing
-   assign halt_bsmash = halt_RnnnnL | ~validPoly_R13H;
+   //assign halt_bsmash = halt_RnnnnL | ~validPoly_R13H;
+   assign halt_bsmash = halt_RnnnnL;
 
    // Backface culling
    always_comb begin
