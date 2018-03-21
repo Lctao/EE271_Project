@@ -186,10 +186,10 @@ module `mname()`
    logic 				outvalid_R10H;               // output is valid
    
    //////// DECLARE OTHER SIGNALS YOU NEED
+   logic halt_bsmash;
    logic signed [2*`$sig_fig`-1:0] comp_bf1;
    logic signed [2*`$sig_fig`-1:0] comp_bf2;
    logic bcull;
-   logic halt_bsmash;
 
    logic [1:0][2:0] comp_sel_R10H; //[X = 0, Y = 1][Vert #]
    logic [1:0][2:0] comp_dec_max_R10S; //[X = 0, Y = 1][Max Vertex = 1]
@@ -228,7 +228,7 @@ module `mname()`
    //; if( $verts == 3 ) {
    // Bubble smashing
    assign halt_bsmash = halt_RnnnnL | ~validPoly_R13H;
-   
+
    // Backface culling
    always_comb begin
       comp_bf1 = (poly_R10S[1][0] - poly_R10S[0][0])*(poly_R10S[2][1] - poly_R10S[1][1]);

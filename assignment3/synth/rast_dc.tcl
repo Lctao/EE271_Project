@@ -24,7 +24,7 @@ set DR_CELL_OUT "ZN"
 #####################
 # Path Variables
 #####################
-set SYN  /afs/ir/class/ee/synopsys/data1/syn/2010.03/libraries/syn/
+set SYN  /afs/ir/class/ee/synopsys/data1/syn/M-2016.12-SP2/libraries/syn/
 set TSMC_45 /afs/ir/class/ee271/project/lib/TSMC_45nm/
 
 
