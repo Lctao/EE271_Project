@@ -1,0 +1,32 @@
+// Signals in Access Order  
+   logic signed [`$sig_fig`-1:0] 	 poly_shift_R16S[`$verts`-1:0][1:0]; // Micropolygon after coordinate shift 
+   logic signed [12:0]       poly_shift_half_R16S[`$verts`-1:0][1:0]; // For multiplier. We need to test the number of bits that will work. Need more than 13.
+   logic signed [`$sig_fig`-1:0] 	 dist_lg_R16S[`$edges`-1:0]; // Result of x_1 * y_2 - x_2 * y_1
+
+
+
+   //// (1) Shift X, Y coordinates such that the fragment resides on the (0,0) position.
+   always_comb begin
+   //; for( my $i = 0 ; $i < $verts ; $i++ ) {
+   //;  for( my $j = 0 ; $j < 2 ; $j++ ) {
+   //always_comb begin
+      poly_shift_R16S[`$i`][`$j`] = poly_R16S[`$i`][`$j`] - sample_R16S[`$j`];
+      poly_shift_half_R16S[`$i`][`$j`] = poly_shift_R16S[`$i`][`$j`];
+   //end
+   //;  }
+   //; }
+   end
+   //// (2) Organize edges (form three edges for
+
+
+   //// (3) Calculate distance x_1 * y_2 - x_2 * y_1
+
+   always_comb begin
+     // assign dist_lg_R16S
+	dist_lg_R16S[0] = (poly_shift_half_R16S[0][0] * poly_shift_half_R16S[1][1]) - (poly_shift_half_R16S[1][0] * poly_shift_half_R16S[0][1]); //0-1 Edge
+	dist_lg_R16S[1] = (poly_shift_half_R16S[1][0] * poly_shift_half_R16S[2][1]) - (poly_shift_half_R16S[2][0] * poly_shift_half_R16S[1][1]); //1-2 Edge
+	dist_lg_R16S[2] = (poly_shift_half_R16S[2][0] * poly_shift_half_R16S[0][1]) - (poly_shift_half_R16S[0][0] * poly_shift_half_R16S[2][1]); //2-0 Edge
+	//dist_lg_R16S[3] = (poly_shift_R16S[2][0] * poly_shift_R16S[3][1]) - (poly_shift_R16S[3][0] * poly_shift_R16S[2][1]); //2-3 Edge
+	//dist_lg_R16S[4] = (poly_shift_R16S[3][0] * poly_shift_R16S[0][1]) - (poly_shift_R16S[0][0] * poly_shift_R16S[3][1]); //3-0 Edge
+	//dist_lg_R16S[5] = (poly_shift_R16S[1][0] * poly_shift_R16S[3][1]) - (poly_shift_R16S[3][0] * poly_shift_R16S[1][1]); //1-3 Edge
+   end   
