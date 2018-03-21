@@ -233,8 +233,7 @@ module `mname()`
    always_comb begin
       comp_bf1 = (poly_R10S[1][0] - poly_R10S[0][0])*(poly_R10S[2][1] - poly_R10S[1][1]);
       comp_bf2 = (poly_R10S[2][0] - poly_R10S[1][0])*(poly_R10S[1][1] - poly_R10S[0][1]);
-      //bcull = (comp_bf1 - comp_bf2) > 0;
-      bcull = 0;
+      bcull = (comp_bf1 - comp_bf2) > 0;
    end
 
    // Assign helper signals
@@ -493,8 +492,8 @@ module `mname()`
    endproperty
 
    //Check that Lower Left of Bounding Box is less than equal Upper Right
-   assert property( rb_lt( rst, box_R13S[0][0] , box_R13S[1][0] , validPoly_R13H ));
-   assert property( rb_lt( rst, box_R13S[0][1] , box_R13S[1][1] , validPoly_R13H ));
+   //assert property( rb_lt( rst, box_R13S[0][0] , box_R13S[1][0] , validPoly_R13H ));
+   //assert property( rb_lt( rst, box_R13S[0][1] , box_R13S[1][1] , validPoly_R13H ));
    //Check that Lower Left of Bounding Box is less than equal Upper Right
    
    //Error Checking Assertions

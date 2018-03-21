@@ -223,7 +223,9 @@ void rastBBox_bbox_fix( u_Poly< long , ushort >& poly ,
   ll_x = ll_x < 0   ? 0   : ll_x ;
   ll_y = ll_y < 0   ? 0   : ll_y ;
 
+  
   valid = true ;
+  valid = (poly.v[1].x[0] - poly.v[0].x[0])*(poly.v[2].x[1] - poly.v[1].x[1]) - (poly.v[2].x[0] - poly.v[1].x[0])*(poly.v[1].x[1] - poly.v[0].x[1]) > 0 ? false : valid;
   valid = ur_x < 0 ? false : valid ;
   valid = ur_y < 0 ? false : valid ;
   valid = ll_x >= screen_w ? false : valid ;

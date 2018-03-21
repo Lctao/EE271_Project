@@ -222,6 +222,7 @@ module `mname()`
    endproperty
 
    //Check that signals should match
+   /*
    assert property( sig_eq_con( rst, poly_RnnS[0][0] , poly_R13S[0][0]  , validPoly_RnnH )); 
    assert property( sig_eq_con( rst, poly_RnnS[0][1] , poly_R13S[0][1]  , validPoly_RnnH )); 
    assert property( sig_eq_con( rst, poly_RnnS[1][0] , poly_R13S[1][0]  , validPoly_RnnH )); 
@@ -229,5 +230,5 @@ module `mname()`
    assert property( sig_eq_con( rst, poly_RnnS[2][0] , poly_R13S[2][0]  , validPoly_RnnH )); 
    assert property( sig_eq_con( rst, poly_RnnS[2][1] , poly_R13S[2][1]  , validPoly_RnnH )); 
    assert property( sig_eq_con( rst, isQuad_RnnH     , isQuad_R13H      , validPoly_RnnH )); 
- 
+   */
 endmodule 
