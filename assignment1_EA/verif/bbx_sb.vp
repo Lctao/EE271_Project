@@ -89,7 +89,6 @@ module `mname()`
   input logic signed [`$sig_fig`-1:0] poly_R13S[`$verts`-1:0][`$axis`-1:0] , // 4 Sets X,Y Fixed Point Values
   input logic 			      validPoly_R13H , // Valid Data for Operation
   input logic 			      isQuad_R13H , // Is Poly Quad?
-  input logic [1:0][1:0] 	      invalidate_R10H,
   input logic 			      clk , // Clock 
   input logic 			      rst , // Reset
  
@@ -212,14 +211,6 @@ module `mname()`
 				     .clk(clk) , .reset(rst), .en(halt_RnnnnL),
 				     .out({validPoly_RnnH, isQuad_RnnH}));
 
-      	//; my $d_03 = generate( 'dff', "d_03", 
-	//;                        BitWidth=>4,
-	//;                        PipelineDepth=>$pipe_depth,
-	//;                        Retime=>'NO' );
-	`$d_03->instantiate()` (
-					 .in(invalidate_R10H) , 
-				     .clk(clk) , .reset(rst), .en(halt_RnnnnL),
-				     .out(invalidate_RnnH));
    
    always @(posedge clk) begin
       assert( rst | ( `$verts`==3 && !isQuad_RnnH ) || `$verts`==4 )

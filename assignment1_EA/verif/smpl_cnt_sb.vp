@@ -95,20 +95,53 @@ module `mname()`
   input logic                        clk,                // Clock 
   input logic                        rst,                // Reset
 			 
-  input logic signed [`$sig_fig`-1:0]   hit_R18S[`$axis`-1:0],
-  input logic signed [`$sig_fig`-1:0]   color_R18U[`$colors`-1:0],
-  input logic                       hit_valid_R18H,
+  input logic signed [`$sig_fig`-1:0]   hit_R18S_0[`$axis`-1:0],
+  input logic signed [`$sig_fig`-1:0]   color_R18U_0[`$colors`-1:0],
+  input logic                       hit_valid_R18H_0,
+
+  input logic signed [`$sig_fig`-1:0]   hit_R18S_1[`$axis`-1:0],
+  input logic signed [`$sig_fig`-1:0]   color_R18U_1[`$colors`-1:0],
+  input logic                       hit_valid_R18H_1,
+
+  input logic signed [`$sig_fig`-1:0]   hit_R18S_2[`$axis`-1:0],
+  input logic signed [`$sig_fig`-1:0]   color_R18U_2[`$colors`-1:0],
+  input logic                       hit_valid_R18H_2,
+
+  input logic signed [`$sig_fig`-1:0]   hit_R18S_3[`$axis`-1:0],
+  input logic signed [`$sig_fig`-1:0]   color_R18U_3[`$colors`-1:0],
+  input logic                       hit_valid_R18H_3,
 		   
   input logic        [`$sig_fig`-1:0]  screen_RnnnnS[1:0],      // Screen Size
   input logic  	     [3:0]         subSample_RnnnnU,    // Flag for subsample
 
 
-  input logic signed [`$sig_fig`-1:0]   s_x_RnnS ,
-  input logic signed [`$sig_fig`-1:0]   s_y_RnnS ,
-  input logic signed [7:0]    jitter_x_RnnS ,
-  input logic signed [7:0]    jitter_y_RnnS,
-  input logic signed [`$sig_fig`-1:0]   s_j_x_RnnS ,
-  input logic signed [`$sig_fig`-1:0]   s_j_y_RnnS 
+  input logic signed [`$sig_fig`-1:0]   s_x_RnnS_0 ,
+  input logic signed [`$sig_fig`-1:0]   s_y_RnnS_0 ,
+  input logic signed [7:0]    jitter_x_RnnS_0 ,
+  input logic signed [7:0]    jitter_y_RnnS_0,
+  input logic signed [`$sig_fig`-1:0]   s_j_x_RnnS_0 ,
+  input logic signed [`$sig_fig`-1:0]   s_j_y_RnnS_0, 
+
+  input logic signed [`$sig_fig`-1:0]   s_x_RnnS_1 ,
+  input logic signed [`$sig_fig`-1:0]   s_y_RnnS_1 ,
+  input logic signed [7:0]    jitter_x_RnnS_1 ,
+  input logic signed [7:0]    jitter_y_RnnS_1,
+  input logic signed [`$sig_fig`-1:0]   s_j_x_RnnS_1 ,
+  input logic signed [`$sig_fig`-1:0]   s_j_y_RnnS_1,
+
+  input logic signed [`$sig_fig`-1:0]   s_x_RnnS_2 ,
+  input logic signed [`$sig_fig`-1:0]   s_y_RnnS_2 ,
+  input logic signed [7:0]    jitter_x_RnnS_2 ,
+  input logic signed [7:0]    jitter_y_RnnS_2,
+  input logic signed [`$sig_fig`-1:0]   s_j_x_RnnS_2 ,
+  input logic signed [`$sig_fig`-1:0]   s_j_y_RnnS_2,
+
+  input logic signed [`$sig_fig`-1:0]   s_x_RnnS_3 ,
+  input logic signed [`$sig_fig`-1:0]   s_y_RnnS_3 ,
+  input logic signed [7:0]    jitter_x_RnnS_3 ,
+  input logic signed [7:0]    jitter_y_RnnS_3,
+  input logic signed [`$sig_fig`-1:0]   s_j_x_RnnS_3 ,
+  input logic signed [`$sig_fig`-1:0]   s_j_y_RnnS_3
 		   
  );
 	
@@ -158,13 +191,46 @@ module `mname()`
       #10;
       if( ~rst ) begin
 	 if( one != rastBBox_jhash_jit_fix_check( 
-					   s_x_RnnS ,
-					   s_y_RnnS ,
+					   s_x_RnnS_0 ,
+					   s_y_RnnS_0 ,
 					   ss_w_lg2 ,
-					   int'( { 24'h000000 , jitter_x_RnnS} ) ,
-					   int'( { 24'h000000 , jitter_y_RnnS} ) ,
-					   s_j_x_RnnS,
-					   s_j_y_RnnS	  ) ) begin
+					   int'( { 24'h000000 , jitter_x_RnnS_0} ) ,
+					   int'( { 24'h000000 , jitter_y_RnnS_0} ) ,
+					   s_j_x_RnnS_0,
+					   s_j_y_RnnS_0	  ) ) begin
+	    assert( 0 ) else $error( "time=%10t ERROR: Hash Check in Rast Failed", $time) ;
+	 end
+
+	 if( one != rastBBox_jhash_jit_fix_check( 
+					   s_x_RnnS_1 ,
+					   s_y_RnnS_1 ,
+					   ss_w_lg2 ,
+					   int'( { 24'h000000 , jitter_x_RnnS_1} ) ,
+					   int'( { 24'h000000 , jitter_y_RnnS_1} ) ,
+					   s_j_x_RnnS_1,
+					   s_j_y_RnnS_1	  ) ) begin
+	    assert( 0 ) else $error( "time=%10t ERROR: Hash Check in Rast Failed", $time) ;
+	 end
+
+	 if( one != rastBBox_jhash_jit_fix_check( 
+					   s_x_RnnS_2 ,
+					   s_y_RnnS_2 ,
+					   ss_w_lg2 ,
+					   int'( { 24'h000000 , jitter_x_RnnS_2} ) ,
+					   int'( { 24'h000000 , jitter_y_RnnS_2} ) ,
+					   s_j_x_RnnS_2,
+					   s_j_y_RnnS_2	  ) ) begin
+	    assert( 0 ) else $error( "time=%10t ERROR: Hash Check in Rast Failed", $time) ;
+	 end
+
+	 if( one != rastBBox_jhash_jit_fix_check( 
+					   s_x_RnnS_3 ,
+					   s_y_RnnS_3 ,
+					   ss_w_lg2 ,
+					   int'( { 24'h000000 , jitter_x_RnnS_3} ) ,
+					   int'( { 24'h000000 , jitter_y_RnnS_3} ) ,
+					   s_j_x_RnnS_3,
+					   s_j_y_RnnS_3	  ) ) begin
 	    assert( 0 ) else $error( "time=%10t ERROR: Hash Check in Rast Failed", $time) ;
 	 end
       end
@@ -237,14 +303,14 @@ module `mname()`
    always_comb begin
    
       reset_to_zero = (poly_Rn1S != poly_RnnS) ; //New Poly
-      reset_to_one = reset_to_zero && hit_valid_R18H ; //New Poly with hit
-      incr = hit_valid_R18H ;
-      keep = ~hit_valid_R18H ;
+      reset_to_one = reset_to_zero && hit_valid_R18H_0 ; //New Poly with hit
+      incr = hit_valid_R18H_0 | hit_valid_R18H_1 | hit_valid_R18H_2 | hit_valid_R18H_3 ;
+      keep = ~(hit_valid_R18H_0 | hit_valid_R18H_1 | hit_valid_R18H_2 | hit_valid_R18H_3) ;
     
       priority case( 1'b1 )
 	(reset_to_one): hit_count_next = 1;
 	(reset_to_zero): hit_count_next = 0;
-	(incr): hit_count_next = hit_count + 1 ;
+	(incr): hit_count_next = hit_count + {31'b0, hit_valid_R18H_0} + {31'b0, hit_valid_R18H_1} + {31'b0, hit_valid_R18H_2} +{31'b0, hit_valid_R18H_3} ;
 	(keep): hit_count_next = hit_count ;
 	default: hit_count_next = 0;
       endcase // case ( 1'b1 )
