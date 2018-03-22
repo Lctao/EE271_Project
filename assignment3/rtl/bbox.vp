@@ -109,6 +109,8 @@
 //; my $pipe_depth = parameter(Name=>'PipelineDepth',
 //;                            Val=>3, Min=>1, Step=>1, 
 //;                            Doc=>"How many pipe stages are in this block");
+//; # local variables
+//; my $dp = 4;
 
 /* A Note on Signal Names:
  *
@@ -187,8 +189,8 @@ module `mname()`
    
    //////// DECLARE OTHER SIGNALS YOU NEED
    logic halt_bsmash;
-   logic signed [2*`$sig_fig`-1:0] comp_bf1;
-   logic signed [2*`$sig_fig`-1:0] comp_bf2;
+   logic signed [2*(`$sig_fig`-`$dp`)-1:0] comp_bf1;
+   logic signed [2*(`$sig_fig`-`$dp`)-1:0] comp_bf2;
    logic bcull;
 
    logic [1:0][2:0] comp_sel_R10H; //[X = 0, Y = 1][Vert #]
@@ -232,8 +234,10 @@ module `mname()`
 
    // Backface culling
    always_comb begin
-      comp_bf1 = (poly_R10S[1][0] - poly_R10S[0][0])*(poly_R10S[2][1] - poly_R10S[1][1]);
-      comp_bf2 = (poly_R10S[2][0] - poly_R10S[1][0])*(poly_R10S[1][1] - poly_R10S[0][1]);
+      comp_bf1 = (poly_R10S[1][0][`$sig_fig`-1-`$dp`:0] - poly_R10S[0][0][`$sig_fig`-1-`$dp`:0]) *
+		 (poly_R10S[2][1][`$sig_fig`-1-`$dp`:0] - poly_R10S[1][1][`$sig_fig`-1-`$dp`:0]);
+      comp_bf2 = (poly_R10S[2][0][`$sig_fig`-1-`$dp`:0] - poly_R10S[1][0][`$sig_fig`-1-`$dp`:0]) *
+		 (poly_R10S[1][1][`$sig_fig`-1-`$dp`:0] - poly_R10S[0][1][`$sig_fig`-1-`$dp`:0]);
       bcull = (comp_bf1 - comp_bf2) > 0;
    end
 
